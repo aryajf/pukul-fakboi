@@ -1,0 +1,28 @@
+{
+  "name": "pukul-fakboi",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --port=8080 --host",
+    "build": "vite build",
+    "serve": "vite preview --port=8080 --host"
+  },
+  "dependencies": {
+    "@aacassandra/vue3-progressbar": "^1.0.3",
+    "@chenfengyuan/vue-countdown": "^2.0.0-beta",
+    "aos": "^2.3.4",
+    "bootstrap": "^5.1.0",
+    "moment": "^2.29.1",
+    "primeicons": "^5.0.0",
+    "primevue": "^3.12.1",
+    "swiper": "^7.0.6",
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.0.0",
+    "sass": "^1.37.5",
+    "vite": "^2.4.4",
+    "vite-plugin-pwa": "^0.10.0"
+  }
+}

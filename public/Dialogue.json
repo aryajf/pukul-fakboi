@@ -1,0 +1,26 @@
+{
+    "IdleDialogues": [
+        {
+            "dialogue": "Kok Kamu gitu sih?"
+        },
+        {
+            "dialogue": "Mau ga jadi pacarku?"
+        }
+    ],
+    "HitDialogues": [
+        {
+            "dialogue": "Apa maksudmu?"
+        },
+        {
+            "dialogue": "Hey, Sakit Tau"
+        }
+    ],
+    "DeathDialogues": [
+        {
+            "dialogue": "Nanti aku call kamu lagi yaa"
+        },
+        {
+            "dialogue": "Maaf yaa ayank"
+        }
+    ]
+}

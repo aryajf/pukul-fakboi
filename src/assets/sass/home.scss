@@ -1,0 +1,29 @@
+@import 'style';
+
+.start-screen{
+    cursor: pointer;
+    background-color: #fc5296;
+    background-image: linear-gradient(315deg, #fc5296 0%, #f67062 74%); 
+    padding: 20px 0;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    z-index: 10000;
+    h1{
+        color: #fff;
+        text-align: center;
+    }
+    .img-container{
+        text-align: center;
+        img{
+            margin: 20px auto;
+        }
+    }
+    h5{
+        color: #fff;
+        text-align: center;
+    }
+}
+.start-screen.hidden{
+    transform: translateY(-100vh);
+}
