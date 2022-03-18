@@ -27,9 +27,13 @@ img{
         text-align: center;
     }
     .img-container{
+        position: absolute;
+        margin: 0;
+        bottom: 0;
+        right: 0;
         text-align: center;
         img{
-            margin: 20px auto;
+            width: 600px;
         }
     }
     h5{
@@ -43,9 +47,8 @@ img{
 
 #selected-screen{
     transition: all .5s ease-out;
-    cursor: pointer;
     background-color: #fc5296;
-    background-image: linear-gradient(315deg, #fc5296 0%, #f67062 74%); 
+    background: linear-gradient(to bottom, #b7eaff 0%,#94dfff 100%);
     padding: 20px 0;
     height: 100vh;
     width: 100%;
@@ -60,6 +63,8 @@ img{
     .img-container{
         text-align: center;
         img{
+            cursor: pointer;
+            width: 200px;
             margin: 20px auto;
         }
     }
@@ -127,7 +132,7 @@ img{
 #cursor{
     width: 120px;
     position: fixed;
-    transition: transform .2s linear;
+    transition: transform .1s linear;
     z-index: 3;
 }
 #cursor.clicked{
@@ -135,6 +140,7 @@ img{
 }
 
 #game-container{
+    overflow: hidden;
     user-drag: none;
     -webkit-user-drag: none;
     user-select: none;
@@ -150,7 +156,7 @@ img{
     #grounds{
         .ground{
             width: 100%;
-            height: 300px;
+            height: 500px;
             position: absolute;
             left: 0;
             bottom: 0;
@@ -159,10 +165,9 @@ img{
 }
 
 #buaya{
+    z-index: -1;
+    width: 200px;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 #health-bar-container{
@@ -187,6 +192,22 @@ img{
         text-align: center;
         font-weight: bold;
     }
+}
+
+#counter{
+    position: absolute;
+    z-index: 2;
+    font-weight: bold;
+    transition: all .5s linear;
+    left:10px;
+    top:5px;
+    transform: translate(0,0);
+}
+#counter.end{
+    font-size: 40px;
+    left:50%;
+    top:50%;
+    transform: translate(-50%,-100%);
 }
 
 #main-char{

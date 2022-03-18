@@ -24,12 +24,12 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="img-container">
-                            <img @click="selectCharacter('Man')" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
+                            <img @click="selectCharacter('Man', 750)" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="img-container">
-                            <img @click="selectCharacter('Woman')" src="@/assets/images/characters/fakboi-man/hitted.png" alt="">
+                            <img @click="selectCharacter('Woman', 750)" src="@/assets/images/characters/fakboi-woman/idle.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -37,10 +37,10 @@
         </div>
         <div id="start-screen" @click="startGame()">
             <div class="container">
-                <h1>Fakboi menggodamu, yuu kita beri dia pelajaran</h1>
+                <h1>Fakboi menggodamu, yuu kita kasih dia pelajaran</h1>
                 <div class="img-container">
-                    <img v-if="fakboiGender == 'Man'" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
-                    <img v-else-if="fakboiGender == 'Woman'" src="@/assets/images/characters/fakboi-man/hitted.png" alt="">
+                    <img v-if="fakboiGender == 'Man'" src="@/assets/images/characters/menu/man.png" alt="">
+                    <img v-else-if="fakboiGender == 'Woman'" src="@/assets/images/characters/menu/woman.png" alt="">
                 </div>
                 <h5>Klik untuk memulai</h5>
             </div>
@@ -49,7 +49,7 @@
             <div class="container-fluid">
                 <img id="winner-image-1" src="@/assets/images/winner.png" alt="">
                 <img id="winner-image-2" src="@/assets/images/winner2.png" alt="">
-                <h1>Yeay! Kamu sudah buat dia kapok</h1>
+                <h1>Yeay! Kamu sudah buat dia nyerah</h1>
                 <div>
                     <button @click="restartGame" class="button-82-pushable">
                         <span class="button-82-shadow"></span>
@@ -85,6 +85,9 @@
                     Buaya Betina
                 </div>
             </div>
+            <div id="counter">
+                {{ score }}
+            </div>
             <div v-if="dialogues" id="dialogues-bar">
                 {{ dialogues[0] }}
             </div>
@@ -98,9 +101,14 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
+import moment from "moment/min/moment-with-locales"
 import store from "@/store";
+let intervalChar, intervalDialogues, intervalScore
+let counter = 0
+let score = ref(0)
 
 const gameStatus = computed(() => store.getters["gameStatus"]);
+const difficulty = computed(() => store.getters["difficulty"]);
 const loadingStatus = computed(() => store.getters["loadingStatus"]);
 const dialogues = computed(() => store.getters["dialogues"]);
 const health = computed(() => store.getters["health"]);
@@ -117,8 +125,8 @@ watch(gameStatus, () => {
     
 });
 
-const selectCharacter = (gender) => {
-    store.dispatch("selectCharacter", gender).then(()=> {
+const selectCharacter = (gender, difficulty) => {
+    store.dispatch("selectCharacter", {gender: gender, difficulty: difficulty}).then(()=> {
         document.getElementById('selected-screen').classList.add("hidden")
     });
 };
@@ -126,11 +134,30 @@ const startGame = () => {
     InitGame()
 };
 
+const initChar = () => {
+    document.getElementById('buaya').style.zIndex = '1'
+    document.getElementById('buaya').style.transform = `translate(${Math.floor(Math.random() * (500 - -500 + 1)) + -500}px, -20%)`
+    document.getElementById('buaya').style.top = `${Math.floor(Math.random() * (50 - 40 + 1)) + 40}%`
+    document.getElementById('buaya').style.left = `${Math.floor(Math.random() * (50 - 25 + 1)) + 25}%`
+}
+
 const InitGame = () => {
     store.dispatch("initGame").then(()=> {
+        score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss')
+        counter = 0
+        initChar()
         document.getElementById('start-screen').classList.add("hidden")
         document.getElementById('bar').style.width = `${health.value}%`
         document.getElementById('soundtrack').play()
+        intervalChar = setInterval(()=> {
+            initChar()
+        }, difficulty.value)
+        intervalDialogues = setInterval(()=> {
+            dialogues.value.sort(() => Math.random() - 0.5)
+        }, 2000)
+        intervalScore = setInterval(()=> {
+            score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss');
+        }, 1000)
     });
 }
 
@@ -143,6 +170,7 @@ const mouseIsMoving = (e) => {
 
 const mouseClick = () => {
     document.getElementById('cursor').classList.add("clicked")
+    initChar()
     setTimeout(() => {
         if(gameStatus.value != 'Defeated') changeGameStatus('Idle')
         document.getElementById('cursor').classList.remove("clicked")
@@ -150,17 +178,27 @@ const mouseClick = () => {
 }
 
 const hitCharacter = () => {
+    clearInterval(intervalDialogues)
     document.getElementById('bar').style.width = `${health.value}%`
     document.getElementById("punch").play()
+    initChar()
     if(health.value <= 0){
         return defeatedCharacter()
     }
     store.dispatch("hitCharacter");
 }
 const defeatedCharacter = () => {
-    document.getElementById('winner-screen').classList.remove("hidden")
-    document.getElementById("wow").play()
-    store.dispatch("defeatedCharacter");
+    clearInterval(intervalChar)
+    clearInterval(intervalScore)
+    store.dispatch("defeatedCharacter").then(() => {
+        document.getElementById('counter').classList.add("end")
+        document.getElementById('winner-screen').classList.remove("hidden")
+        document.getElementById("wow").play()
+        document.getElementById('buaya').style.zIndex = '1'
+        document.getElementById('buaya').style.bottom = '10%'
+        document.getElementById('buaya').style.left = '50%'
+        document.getElementById('buaya').style.transform = `translate(-50%, 0)`
+    })
 
 }
 const changeGameStatus = (status) => {
@@ -173,6 +211,7 @@ const restartGame = () => {
     closeWinner()
     document.getElementById('selected-screen').classList.remove("hidden")
     document.getElementById('start-screen').classList.remove("hidden")
+    document.getElementById('counter').classList.remove("end")
     document.getElementById('soundtrack').pause()
     document.getElementById('soundtrack').currentTime = 0
 }

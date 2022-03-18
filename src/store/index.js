@@ -3,6 +3,7 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     gameStatus: null,
+    difficulty: null,
     loadingStatus: false,
     dialogues: [],
     health: null,
@@ -11,6 +12,9 @@ export default createStore({
   getters: {
     gameStatus(state){
       return state.gameStatus
+    },
+    difficulty(state){
+      return state.difficulty
     },
     loadingStatus(state){
       return state.loadingStatus
@@ -26,10 +30,11 @@ export default createStore({
     },
   },
   actions: {
-    async selectCharacter({state}, gender){
+    async selectCharacter({state}, data){
       state.loading = true
       try{
-        state.fakboiGender = gender
+        state.fakboiGender = data.gender
+        state.difficulty = data.difficulty
       }catch(error) {
         
       }
