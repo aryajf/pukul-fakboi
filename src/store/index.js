@@ -2,38 +2,78 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    btnLoading: false,
+    gameStatus: null,
     loadingStatus: false,
-    health: null
-  },
-  mutations: {
-    SET_BUTTON_LOADING(state, status){
-      state.btnLoading = status
-    },
-    SET_LOADING(state, status){
-      state.loadingStatus = status
-    },
-  },
-  actions: {
-    async initGame({state, commit}){
-      try{
-        const response = await fetch('./Dialogue.json')
-        const dialogues = await response.json();
-        console.log(dialogues)
-        state.loading = true
-        state.health = 100
-        state.loading = false
-      }catch(error) {
-        console.error(`Could not get products: ${error}`);
-      }
-    }
+    dialogues: [],
+    health: null,
+    fakboiGender: null
   },
   getters: {
-    btnLoading(state){
-      return state.btnLoading
+    gameStatus(state){
+      return state.gameStatus
     },
     loadingStatus(state){
       return state.loadingStatus
     },
+    dialogues(state){
+      return state.dialogues
+    },
+    health(state){
+      return state.health
+    },
+    fakboiGender(state){
+      return state.fakboiGender
+    },
   },
+  actions: {
+    async selectCharacter({state}, gender){
+      state.loading = true
+      try{
+        state.fakboiGender = gender
+      }catch(error) {
+        
+      }
+    },
+    async initGame({state}){
+      state.loading = true
+      try{
+        const response = await fetch('./Dialogue.json')
+        if(response.status == 200){
+          const dialogues = await response.json();
+          state.dialogues = dialogues.IdleDialogues
+          state.health = 100
+          state.gameStatus = 'Idle'
+          state.loading = false
+        }
+      }catch(error) {
+        
+      }
+    },
+    async hitCharacter({state}){
+      try{
+        const response = await fetch('./Dialogue.json')
+        if(response.status == 200){
+          const dialogues = await response.json();
+          state.dialogues = dialogues.HitDialogues
+          if(state.health >=0){
+            state.health -= 5
+          }
+          state.gameStatus = 'Hitted'
+        }
+      }catch(error) {}
+    },
+    async defeatedCharacter({state}){
+      try{
+        const response = await fetch('./Dialogue.json')
+        if(response.status == 200){
+          const dialogues = await response.json();
+          state.dialogues = dialogues.DefeatDialogues
+          state.gameStatus = 'Defeated'
+        }
+      }catch(error) {}
+    },
+    async changeGameStatus({state}, status){
+      state.gameStatus = status
+    },
+  }
 })

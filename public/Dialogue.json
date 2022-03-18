@@ -1,26 +1,21 @@
 {
     "IdleDialogues": [
-        {
-            "dialogue": "Kok Kamu gitu sih?"
-        },
-        {
-            "dialogue": "Mau ga jadi pacarku?"
-        }
+        "Mau ga jadi pacarku?",
+        "Kok kamu keliatan cantik ya?",
+        "Jangan jangan kita jodoh nih",
+        "Ihh kawai banget ^_^",
+        "Aku janji gabakalan ninggalin kamu"
     ],
     "HitDialogues": [
-        {
-            "dialogue": "Apa maksudmu?"
-        },
-        {
-            "dialogue": "Hey, Sakit Tau"
-        }
+        "Kamu kok gitu sih?",
+        "Hey, Sakit Tau",
+        "Kamu jangan kasar dong",
+        "Sakit tau yank"
     ],
-    "DeathDialogues": [
-        {
-            "dialogue": "Nanti aku call kamu lagi yaa"
-        },
-        {
-            "dialogue": "Maaf yaa ayank"
-        }
+    "DefeatDialogues": [
+        "Ohh jadi gini ya rasanya ditinggalkan",
+        "Maafin aku :(",
+        "Nanti aku call kamu lagi yaa",
+        "Maaf yaa ayank"
     ]
 }
