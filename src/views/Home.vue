@@ -20,16 +20,18 @@
         <img id="cursor" src="@/assets/images/hammer.png" alt="">
         <div id="selected-screen">
             <div class="container">
-                <h1>Pilih Fakboi</h1>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="img-container">
-                            <img @click="selectCharacter('Man', 750)" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
+                <div style="height:100vh;" class="row d-flex align-items-center align-items-content">
+                    <h1>Pilih Karakter</h1>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="img-container">
+                                <img @click="selectCharacter('Man', 750)" src="@/assets/images/characters/main/man.png" alt="">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="img-container">
-                            <img @click="selectCharacter('Woman', 750)" src="@/assets/images/characters/fakboi-woman/idle.png" alt="">
+                        <div class="col-md-6">
+                            <div class="img-container">
+                                <img @click="selectCharacter('Woman', 750)" src="@/assets/images/characters/main/woman.png" alt="">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -39,8 +41,8 @@
             <div class="container">
                 <h1>Fakboi menggodamu, yuu kita kasih dia pelajaran</h1>
                 <div class="img-container">
-                    <img v-if="fakboiGender == 'Man'" src="@/assets/images/characters/menu/man.png" alt="">
-                    <img v-else-if="fakboiGender == 'Woman'" src="@/assets/images/characters/menu/woman.png" alt="">
+                    <img v-if="gender == 'Man'" src="@/assets/images/characters/menu/woman.png" alt="">
+                    <img v-else-if="gender == 'Woman'" src="@/assets/images/characters/menu/man.png" alt="">
                 </div>
                 <h5>Klik untuk memulai</h5>
             </div>
@@ -62,37 +64,37 @@
             </div>
         </div>
         <div id="game-container">
-            <template v-if="fakboiGender && gameStatus">
-                <template v-if="fakboiGender == 'Man'">
-                    <img v-if="gameStatus == 'Idle'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
-                    <img v-else-if="gameStatus == 'Hitted'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/hitted.png" alt="">
-                    <img v-else-if="gameStatus == 'Defeated'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/defeated.png" alt="">
-                </template>
-                <template v-else-if="fakboiGender == 'Woman'">
+            <template v-if="gender && gameStatus">
+                <template v-if="gender == 'Man'">
                     <img v-if="gameStatus == 'Idle'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-woman/idle.png" alt="">
                     <img v-else-if="gameStatus == 'Hitted'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-woman/hitted.png" alt="">
                     <img v-else-if="gameStatus == 'Defeated'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-woman/defeated.png" alt="">
+                </template>
+                <template v-else-if="gender == 'Woman'">
+                    <img v-if="gameStatus == 'Idle'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/idle.png" alt="">
+                    <img v-else-if="gameStatus == 'Hitted'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/hitted.png" alt="">
+                    <img v-else-if="gameStatus == 'Defeated'" @click="hitCharacter()" id="buaya" src="@/assets/images/characters/fakboi-man/defeated.png" alt="">
                 </template>
             </template>
             <div id="health-bar-container">
                 <div id="health-bar">
                     <div id="bar"></div>
                 </div>
-                <div v-if="fakboiGender == 'Man'" id="boss">
-                    Buaya Jantan
-                </div>
-                <div v-else-if="fakboiGender == 'Woman'" id="boss">
+                <div v-if="gender == 'Man'" id="boss">
                     Buaya Betina
+                </div>
+                <div v-else-if="gender == 'Woman'" id="boss">
+                    Buaya Jantan
                 </div>
             </div>
             <div id="counter">
                 {{ score }}
             </div>
             <div v-if="dialogues" id="dialogues-bar">
-                {{ dialogues[0] }}
+                {{ dialogues }}
             </div>
-            <img v-if="fakboiGender == 'Man'" id="main-char" src="@/assets/images/characters/main/woman.png" alt="">
-            <img v-else-if="fakboiGender == 'Woman'" id="main-char" src="@/assets/images/characters/main/man.png" alt="">
+            <img v-if="gender == 'Man'" id="main-char" src="@/assets/images/characters/main/man.png" alt="">
+            <img v-else-if="gender == 'Woman'" id="main-char" src="@/assets/images/characters/main/woman.png" alt="">
             <div id="grounds">
                 <img src="@/assets/images/ground/01.png" class="ground" alt="">
             </div>
@@ -112,7 +114,7 @@ const difficulty = computed(() => store.getters["difficulty"]);
 const loadingStatus = computed(() => store.getters["loadingStatus"]);
 const dialogues = computed(() => store.getters["dialogues"]);
 const health = computed(() => store.getters["health"]);
-const fakboiGender = computed(() => store.getters["fakboiGender"]);
+const gender = computed(() => store.getters["gender"]);
 
 onMounted(() => {
     window.addEventListener('mousemove', mouseIsMoving);
@@ -153,8 +155,8 @@ const InitGame = () => {
             initChar()
         }, difficulty.value)
         intervalDialogues = setInterval(()=> {
-            dialogues.value.sort(() => Math.random() - 0.5)
-        }, 2000)
+            store.dispatch("returnDialogues")
+        }, 4000)
         intervalScore = setInterval(()=> {
             score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss');
         }, 1000)
@@ -178,14 +180,13 @@ const mouseClick = () => {
 }
 
 const hitCharacter = () => {
-    clearInterval(intervalDialogues)
     document.getElementById('bar').style.width = `${health.value}%`
     document.getElementById("punch").play()
     initChar()
     if(health.value <= 0){
         return defeatedCharacter()
     }
-    store.dispatch("hitCharacter");
+    store.dispatch("hitCharacter")
 }
 const defeatedCharacter = () => {
     clearInterval(intervalChar)

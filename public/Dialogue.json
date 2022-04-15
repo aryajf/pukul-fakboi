@@ -1,11 +1,16 @@
 {
     "IdleDialogues": [
         "Mau ga jadi pacarku?",
+        "Seneng banget ngeliat kamu",
+        "Aku gabisa hidup tanpamu",
+        "Kamu membuat hidupku cerah tiap hari",
         "Kok kamu keliatan cantik ya?",
         "Jangan jangan kita jodoh nih"
     ],
     "HitDialogues": [
         "Kamu kok gitu sih?",
+        "Jahat banget",
+        "Ihh gasuka",
         "Hey, Sakit Tau",
         "Kamu jangan kasar dong",
         "Sakit tau yank",
@@ -13,6 +18,9 @@
     ],
     "DefeatDialogues": [
         "Ohh jadi gini ya rasanya ditinggalin",
+        "Keknya aku yang salah",
+        "Maaf bikin kamu kecewa",
+        "Maaf bikin kamu risih yaa",
         "Maafin aku :(",
         "Nanti aku call kamu lagi yaa",
         "Maaf yaa ayank"

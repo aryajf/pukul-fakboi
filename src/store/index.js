@@ -7,7 +7,7 @@ export default createStore({
     loadingStatus: false,
     dialogues: [],
     health: null,
-    fakboiGender: null
+    gender: null
   },
   getters: {
     gameStatus(state){
@@ -25,15 +25,15 @@ export default createStore({
     health(state){
       return state.health
     },
-    fakboiGender(state){
-      return state.fakboiGender
+    gender(state){
+      return state.gender
     },
   },
   actions: {
     async selectCharacter({state}, data){
       state.loading = true
       try{
-        state.fakboiGender = data.gender
+        state.gender = data.gender
         state.difficulty = data.difficulty
       }catch(error) {
         
@@ -44,8 +44,9 @@ export default createStore({
       try{
         const response = await fetch('./Dialogue.json')
         if(response.status == 200){
-          const dialogues = await response.json();
-          state.dialogues = dialogues.IdleDialogues
+          const dialogues = await response.json()
+          console.log(dialogues.IdleDialogues[Math.floor(Math.random()*dialogues.IdleDialogues.length)])
+          state.dialogues = dialogues.IdleDialogues[Math.floor(Math.random()*dialogues.IdleDialogues.length)]
           state.health = 100
           state.gameStatus = 'Idle'
           state.loading = false
@@ -58,8 +59,9 @@ export default createStore({
       try{
         const response = await fetch('./Dialogue.json')
         if(response.status == 200){
-          const dialogues = await response.json();
-          state.dialogues = dialogues.HitDialogues
+          const dialogues = await response.json()
+          state.dialogues = dialogues.HitDialogues[Math.floor(Math.random()*dialogues.HitDialogues.length)]
+          console.log(state.dialogues)
           if(state.health >=0){
             state.health -= 5
           }
@@ -67,12 +69,21 @@ export default createStore({
         }
       }catch(error) {}
     },
+    async returnDialogues({state}){
+      try{
+        const response = await fetch('./Dialogue.json')
+        if(response.status == 200){
+          const dialogues = await response.json()
+          state.dialogues = dialogues.IdleDialogues[Math.floor(Math.random()*dialogues.IdleDialogues.length)]
+        }
+      }catch(error) {}
+    },
     async defeatedCharacter({state}){
       try{
         const response = await fetch('./Dialogue.json')
         if(response.status == 200){
-          const dialogues = await response.json();
-          state.dialogues = dialogues.DefeatDialogues
+          const dialogues = await response.json()
+          state.dialogues = dialogues.DefeatDialogues[Math.floor(Math.random()*dialogues.DefeatDialogues.length)]
           state.gameStatus = 'Defeated'
         }
       }catch(error) {}
