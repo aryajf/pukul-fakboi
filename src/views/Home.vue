@@ -12,6 +12,10 @@
             <source src="@/assets/audios/wow.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
+        <audio id="win">
+            <source src="@/assets/audios/win.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
         <audio id="punch">
             <source src="@/assets/audios/punch.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
@@ -45,6 +49,17 @@
                     <img v-else-if="gender == 'Woman'" src="@/assets/images/characters/menu/man.png" alt="">
                 </div>
                 <h5>Klik untuk memulai</h5>
+            </div>
+        </div>
+        <div id="loading-screen" class="hidden">
+            <div class="container">
+                <Loading />
+                <div id="tips-bar">
+                    <h4 class="mb-3">TIPS: </h4>
+                    <div>
+                        {{ tips }}
+                    </div>
+                </div>
             </div>
         </div>
         <div id="winner-screen" class="hidden">
@@ -90,6 +105,7 @@
             <div id="counter">
                 {{ score }}
             </div>
+            <div v-if="highscore" id="highscore">HIGH SCORE : {{ highscore }}</div>
             <div v-if="dialogues" id="dialogues-bar">
                 {{ dialogues }}
             </div>
@@ -105,14 +121,17 @@
 import { ref, computed, onMounted, watch } from "vue";
 import moment from "moment/min/moment-with-locales"
 import store from "@/store";
+import Loading from "@/components/loadings/Pacman.vue";
 let intervalChar, intervalDialogues, intervalScore
 let counter = 0
+let highscore = ref(0)
 let score = ref(0)
 
 const gameStatus = computed(() => store.getters["gameStatus"]);
 const difficulty = computed(() => store.getters["difficulty"]);
 const loadingStatus = computed(() => store.getters["loadingStatus"]);
 const dialogues = computed(() => store.getters["dialogues"]);
+const tips = computed(() => store.getters["tips"]);
 const health = computed(() => store.getters["health"]);
 const gender = computed(() => store.getters["gender"]);
 
@@ -133,7 +152,9 @@ const selectCharacter = (gender, difficulty) => {
     });
 };
 const startGame = () => {
-    InitGame()
+    store.dispatch("initTips").then(() => {
+        InitGame()
+    })
 };
 
 const initChar = () => {
@@ -144,23 +165,32 @@ const initChar = () => {
 }
 
 const InitGame = () => {
-    store.dispatch("initGame").then(()=> {
-        score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss')
-        counter = 0
-        initChar()
-        document.getElementById('start-screen').classList.add("hidden")
-        document.getElementById('bar').style.width = `${health.value}%`
-        document.getElementById('soundtrack').play()
-        intervalChar = setInterval(()=> {
+    document.getElementById('loading-screen').classList.remove("hidden")
+    setTimeout(() => {
+    document.getElementById('start-screen').classList.add("hidden")
+    }, 200)
+    setTimeout(() => {
+        store.dispatch("initGame").then(()=> {
+            if(localStorage.hasOwnProperty('highscore')){
+                highscore.value = moment.utc(localStorage.getItem('highscore')*1000).format('HH : mm : ss')
+            }
+            document.getElementById('loading-screen').classList.add("hidden")
+            score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss')
+            counter = 0
             initChar()
-        }, difficulty.value)
-        intervalDialogues = setInterval(()=> {
-            store.dispatch("returnDialogues")
-        }, 4000)
-        intervalScore = setInterval(()=> {
-            score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss');
-        }, 1000)
-    });
+            document.getElementById('bar').style.width = `${health.value}%`
+            document.getElementById('soundtrack').play()
+            intervalChar = setInterval(()=> {
+                initChar()
+            }, difficulty.value)
+            intervalDialogues = setInterval(()=> {
+                store.dispatch("returnDialogues")
+            }, 4000)
+            intervalScore = setInterval(()=> {
+                score.value = moment().hour(0).minute(0).second(counter++).format('HH : mm : ss');
+            }, 1000)
+        });
+    }, 4000)
 }
 
 const mouseIsMoving = (e) => {
@@ -189,8 +219,15 @@ const hitCharacter = () => {
     store.dispatch("hitCharacter")
 }
 const defeatedCharacter = () => {
+    document.getElementById('soundtrack').pause()
+    document.getElementById('soundtrack').currentTime = 0
+    document.getElementById('win').play()
     clearInterval(intervalChar)
     clearInterval(intervalScore)
+    clearInterval(intervalDialogues)
+    if(localStorage.getItem('highscore') > counter){
+        localStorage.setItem('highscore', counter)
+    }
     store.dispatch("defeatedCharacter").then(() => {
         document.getElementById('counter').classList.add("end")
         document.getElementById('winner-screen').classList.remove("hidden")
@@ -209,12 +246,16 @@ const closeWinner = () => {
     document.getElementById('winner-screen').classList.add("hidden")
 }
 const restartGame = () => {
-    closeWinner()
-    document.getElementById('selected-screen').classList.remove("hidden")
-    document.getElementById('start-screen').classList.remove("hidden")
-    document.getElementById('counter').classList.remove("end")
-    document.getElementById('soundtrack').pause()
-    document.getElementById('soundtrack').currentTime = 0
+    document.getElementById('loading-screen').classList.remove("hidden")
+    setTimeout(() => {
+        document.getElementById('loading-screen').classList.add("hidden")
+        document.getElementById('win').pause()
+        document.getElementById('win').currentTime = 0
+        closeWinner()
+        document.getElementById('start-screen').classList.remove("hidden")
+        document.getElementById('selected-screen').classList.remove("hidden")
+        document.getElementById('counter').classList.remove("end")
+    }, 2000)
 }
 </script>
 

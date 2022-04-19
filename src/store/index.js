@@ -7,7 +7,8 @@ export default createStore({
     loadingStatus: false,
     dialogues: [],
     health: null,
-    gender: null
+    gender: null,
+    tips: []
   },
   getters: {
     gameStatus(state){
@@ -21,6 +22,9 @@ export default createStore({
     },
     dialogues(state){
       return state.dialogues
+    },
+    tips(state){
+      return state.tips
     },
     health(state){
       return state.health
@@ -45,11 +49,22 @@ export default createStore({
         const response = await fetch('./Dialogue.json')
         if(response.status == 200){
           const dialogues = await response.json()
-          console.log(dialogues.IdleDialogues[Math.floor(Math.random()*dialogues.IdleDialogues.length)])
           state.dialogues = dialogues.IdleDialogues[Math.floor(Math.random()*dialogues.IdleDialogues.length)]
           state.health = 100
           state.gameStatus = 'Idle'
           state.loading = false
+        }
+      }catch(error) {
+        
+      }
+    },
+    async initTips({state}){
+      state.loading = true
+      try{
+        const response = await fetch('./Tips.json')
+        if(response.status == 200){
+          const tips = await response.json()
+          state.tips = tips.Tips[Math.floor(Math.random()*tips.Tips.length)]
         }
       }catch(error) {
         
@@ -61,7 +76,6 @@ export default createStore({
         if(response.status == 200){
           const dialogues = await response.json()
           state.dialogues = dialogues.HitDialogues[Math.floor(Math.random()*dialogues.HitDialogues.length)]
-          console.log(state.dialogues)
           if(state.health >=0){
             state.health -= 5
           }
