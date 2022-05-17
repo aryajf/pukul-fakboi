@@ -43,7 +43,7 @@
         </div>
         <div id="start-screen" @click="startGame()">
             <div class="container">
-                <h1>Fakboi menggodamu, yuu kita kasih dia pelajaran</h1>
+                <h1>Fakboi menggodamu <br> Ayo kita kasih dia pelajaran</h1>
                 <div class="img-container">
                     <img v-if="gender == 'Man'" src="@/assets/images/characters/menu/woman.png" alt="">
                     <img v-else-if="gender == 'Woman'" src="@/assets/images/characters/menu/man.png" alt="">

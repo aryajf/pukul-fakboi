@@ -18,14 +18,6 @@ const routes = [
       window.scrollTo(0, 0)
     }
   },
-  {
-    path: '/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "About" */ '@/views/About.vue'),
-    beforeEnter: () => {
-      window.scrollTo(0, 0)
-    }
-  },
 ]
 
 const router = createRouter({
